@@ -1,25 +1,22 @@
 package dk.si.restfull.controller;
 
 import dk.si.restfull.classes.TravelRequest;
-import dk.si.restfull.rabbit.Rabbit;
-import org.json.JSONObject;
+import get.dk.si.route.Util;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.List;
 
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 public class TravelController {
 
-    Integer visitorCount = 0;
-    ArrayList ips = new ArrayList<String>();
+    private Integer visitorCount = 0;
 
 
+    private Util util = new Util();
+    private RoutingSlipCreator routingSlipCreator = new RoutingSlipCreator();
 
     @GetMapping("/")
     public ResponseEntity getHello() {
@@ -43,10 +40,10 @@ public class TravelController {
         visitorCount++;
         try {
             System.out.println(travelRequest);
-            Rabbit rabbit = new Rabbit();
-            rabbit.send(travelRequest.toString());
+
+            routingSlipCreator.routeService(travelRequest);
+
             return travelRequest;
-            //return ResponseEntity.ok().body("{\"response\" : \"ok\"}");
         } catch (Exception e) {
             return null;
             //return ResponseEntity.badRequest().build();
