@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public class RoutingSlipCreator {
@@ -20,6 +19,7 @@ public class RoutingSlipCreator {
 
     public void routeService(TravelRequest travelRequest) {
         try {
+            logger.info("Recieved request.");
             Root root = new Root();
 
 
@@ -37,6 +37,7 @@ public class RoutingSlipCreator {
 
             util.sendToRoute(route, json);
 
+            logger.info("Sent to rabbit.");
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(e.getMessage());

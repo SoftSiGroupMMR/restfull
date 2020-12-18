@@ -2,10 +2,14 @@ package dk.si.restfull.controller;
 
 import dk.si.restfull.classes.TravelRequest;
 import get.dk.si.route.Util;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -18,10 +22,35 @@ public class TravelController {
     private Util util = new Util();
     private RoutingSlipCreator routingSlipCreator = new RoutingSlipCreator();
 
+
+
     @GetMapping("/")
     public ResponseEntity getHello() {
         visitorCount++;
         return ResponseEntity.ok().body("{\"response\": \"ok\"}");
+    }
+
+
+
+    @PostMapping("/travelRequest")
+    public EntityModel<TravelRequest> createTravelSearch(@RequestBody TravelRequest travelRequest) {
+        visitorCount++;
+        try {
+            System.out.println(travelRequest);
+
+            routingSlipCreator.routeService(travelRequest);
+
+            EntityModel<TravelRequest> resource = EntityModel.of(travelRequest);
+
+            Link selfLink = linkTo(methodOn(this.getClass()).createTravelSearch(travelRequest)).withSelfRel();
+            resource.add(selfLink);
+
+
+            return resource;
+
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 
@@ -31,22 +60,6 @@ public class TravelController {
             return ResponseEntity.ok().body("{\"visitorCount\" : " + visitorCount + "}");
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
-        }
-    }
-
-
-    @PostMapping("/createTravel")
-    public TravelRequest createTravelSearch(@RequestBody TravelRequest travelRequest) {
-        visitorCount++;
-        try {
-            System.out.println(travelRequest);
-
-            routingSlipCreator.routeService(travelRequest);
-
-            return travelRequest;
-        } catch (Exception e) {
-            return null;
-            //return ResponseEntity.badRequest().build();
         }
     }
 

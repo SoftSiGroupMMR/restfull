@@ -1,5 +1,7 @@
 package dk.si.restfull.classes;
 
+
+
 public class TravelRequest {
 
     String customerEmail, customerName;
